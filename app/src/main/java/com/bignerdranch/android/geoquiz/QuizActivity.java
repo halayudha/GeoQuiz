@@ -26,7 +26,7 @@ public class QuizActivity extends AppCompatActivity {
     };
 
     private int mCurrentIndex = 0;
-
+    private int score;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +43,8 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 checkAnswer(true);
+                mTrueButton.setEnabled(false);
+                mFalseButton.setEnabled(false);
             }
         });
         mFalseButton = (Button) findViewById(R.id.false_button);
@@ -51,6 +53,8 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 checkAnswer(false);
+                mTrueButton.setEnabled(false);
+                mFalseButton.setEnabled(false);
             }
         });
 
@@ -58,7 +62,18 @@ public class QuizActivity extends AppCompatActivity {
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+                if (mCurrentIndex != mQuestionBank.length - 1) {
+                    mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+                } else {
+                    Log.d(TAG, "Last Question");
+                    Log.d(TAG, String.valueOf(score));
+                    float finalScore = (float)score/(float)mQuestionBank.length*100;
+                    Toast.makeText(QuizActivity.this,"Your Score is " + String.valueOf(finalScore),Toast.LENGTH_LONG).show();
+                    score = 0;
+                    mCurrentIndex = 0;
+                }
+                mTrueButton.setEnabled(true);
+                mFalseButton.setEnabled(true);
                 updateQuestion();
             }
         });
@@ -113,6 +128,7 @@ public class QuizActivity extends AppCompatActivity {
 
         if(userPressedTrue == answerIsTrue){
             messageResId = R.string.correct_toast;
+            score++;
         }else{
             messageResId = R.string.incorrect_toast;
         }
